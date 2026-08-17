@@ -1,0 +1,813 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500;1,600&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+  font-family: 'Manrope', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* --- палитра: тёмное вино + золото, письмо при свечах --- */
+  --wine-deep: #23081a;
+  --wine: #351025;
+  --wine-light: #521a37;
+  --gold: #d8b26a;
+  --gold-soft: #f0deb4;
+  --rose: #e39aa4;
+  --cream: #fbf3e6;
+  --cream-dim: #efe1c8;
+  --ink: #2c1420;
+  --line: rgba(216, 178, 106, 0.35);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  margin: 0;
+  height: 100%;
+  min-height: 100vh;
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  background: linear-gradient(160deg, var(--wine-deep), var(--wine) 60%, var(--wine-deep)),
+    url('./assets/bg-paper-texture.jpg') center center / cover no-repeat;
+  background-size: 140% 140%;
+  animation: ambientDrift 22s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cream);
+  overflow-x: hidden;
+}
+
+@keyframes ambientDrift {
+  0%, 100% { background-position: 0% 0%; }
+  50% { background-position: 30% 20%; }
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.app-shell {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 20px;
+}
+
+/* ==================== ФОНОВЫЕ ПЯТНА (blobs) ==================== */
+
+.blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.blob-mint {
+  width: 320px;
+  height: 320px;
+  top: -80px;
+  left: -80px;
+  background: radial-gradient(circle, rgba(216, 178, 106, 0.5), transparent 70%);
+}
+
+.blob-lavender {
+  width: 360px;
+  height: 360px;
+  bottom: -100px;
+  right: -100px;
+  background: radial-gradient(circle, rgba(227, 154, 164, 0.45), transparent 70%);
+}
+
+.blob-peach {
+  width: 260px;
+  height: 260px;
+  top: 40%;
+  right: -60px;
+  background: radial-gradient(circle, rgba(240, 222, 180, 0.4), transparent 70%);
+}
+
+/* ==================== КОНВЕРТ / ПРИГЛАШЕНИЕ ==================== */
+
+.envelope-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(216, 178, 106, 0.1) 0%, transparent 55%),
+    linear-gradient(160deg, var(--wine-deep), var(--wine) 60%, var(--wine-deep));
+}
+
+.envelope {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.envelope-eyebrow {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.envelope-body {
+  position: relative;
+  width: min(78vw, 300px);
+  height: min(56vw, 210px);
+  background: linear-gradient(160deg, var(--cream), var(--cream-dim));
+  border-radius: 10px;
+  box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(216, 178, 106, 0.5);
+  overflow: visible;
+}
+
+.envelope-body::before,
+.envelope-body::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.envelope-body::before {
+  left: 0;
+  border-width: 0 0 100% 50%;
+  border-color: transparent transparent rgba(44, 20, 32, 0.08) transparent;
+}
+
+.envelope-body::after {
+  right: 0;
+  border-width: 0 50% 100% 0;
+  border-color: transparent transparent rgba(44, 20, 32, 0.08) transparent;
+}
+
+.envelope-flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 62%;
+  transform-origin: top center;
+  background: linear-gradient(200deg, var(--wine-light), var(--wine));
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+}
+
+.wax-seal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  border: none;
+  background: radial-gradient(circle at 35% 30%, #c14f5f, #7a1f30 70%);
+  box-shadow: 0 10px 24px -6px rgba(0, 0, 0, 0.55), inset 0 0 0 2px rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-soft);
+  cursor: pointer;
+  z-index: 2;
+}
+
+.wax-seal-inner {
+  display: flex;
+}
+
+.wax-seal-inner svg {
+  width: 24px;
+  height: 24px;
+}
+
+.envelope-hint {
+  margin: 0;
+  font-size: 13px;
+  color: var(--cream-dim);
+  opacity: 0.75;
+}
+
+/* ==================== ОСНОВНАЯ КАРТОЧКА ==================== */
+
+.content-card {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 520px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  background: linear-gradient(165deg, var(--cream), var(--cream-dim));
+  color: var(--ink);
+  border-radius: 26px;
+  padding: 40px 34px 34px;
+  box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--line);
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  font-size: 12px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #a4703a;
+  font-weight: 700;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(28px, 4.2vw, 44px);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+}
+
+h1 em {
+  color: #a12645;
+  font-style: italic;
+  font-weight: 600;
+}
+
+.subtitle {
+  margin: 10px 0 20px;
+  max-width: 390px;
+  font-size: 15px;
+  opacity: 0.72;
+  color: var(--ink);
+}
+
+.icon-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  margin-bottom: 22px;
+  background: linear-gradient(145deg, #f3d3d9, #f3e0bd);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 18px 36px -14px rgba(44, 20, 32, 0.35), inset 0 0 0 5px #fffaf1;
+  position: relative;
+}
+
+.icon-circle::after {
+  content: '';
+  position: absolute;
+  inset: -9px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(216, 178, 106, 0.6);
+}
+
+.icon-circle svg {
+  width: 52px;
+  height: 52px;
+  color: #a12645;
+}
+
+.actions {
+  position: relative;
+  width: min(100%, 460px);
+  min-height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+
+button {
+  cursor: pointer;
+}
+
+.yes-btn,
+.submit-btn {
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #a12645, #c14f5f);
+  color: var(--cream);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 14px 26px -8px rgba(161, 38, 69, 0.55);
+}
+
+.yes-btn {
+  padding: 15px 34px;
+  font-size: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.yes-btn svg,
+.submit-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* фиксированное позиционирование от всего окна — соответствует
+   логике JS (window.innerWidth / window.innerHeight) */
+.no-btn {
+  position: fixed;
+  border: 1.5px solid var(--line);
+  background: var(--cream);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 15px 28px;
+  font-weight: 700;
+  font-size: 15px;
+  box-shadow: 0 8px 18px -12px rgba(44, 20, 32, 0.3);
+  z-index: 50;
+}
+
+.no-btn:not(.escaping) {
+  position: relative;
+  left: auto !important;
+  top: auto !important;
+}
+
+.music-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 20px 9px 16px;
+  border: 1.5px solid var(--line);
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--ink);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 22px;
+  box-shadow: 0 6px 14px -8px rgba(44, 20, 32, 0.25);
+}
+
+.music-toggle svg {
+  width: 15px;
+  height: 15px;
+  color: #a12645;
+}
+
+.planner,
+.summary {
+  width: min(100%, 460px);
+  margin-top: 18px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 24px 22px;
+  text-align: left;
+  box-shadow: 0 18px 40px -18px rgba(44, 20, 32, 0.3);
+}
+
+.planner h2 {
+  margin: 0 0 24px;
+  text-align: center;
+  font-size: 25px;
+  color: var(--ink);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+}
+.react-datepicker-wrapper{
+  width: 100%;
+}
+.field-label {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 8px;
+  margin: 18px 0 10px;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.field-label svg {
+  width: 15px;
+  height: 15px;
+  color: #a12645;
+}
+
+.field-label span {
+  font-weight: 500;
+  text-transform: none;
+  opacity: 0.6;
+}
+
+.date-picker {
+  width: 100% !important;
+  border: 1.5px solid var(--line);
+  background: #fffaf1;
+  color: var(--ink);
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.date-picker:focus {
+  outline: none;
+  border-color: #a12645;
+}
+
+/* ==================== КАСТОМИЗАЦИЯ REACT-DATEPICKER ==================== */
+
+.custom-calendar.react-datepicker {
+  border-radius: 18px !important;
+  border: 1px solid var(--line) !important;
+  box-shadow: 0 24px 50px -16px rgba(44, 20, 32, 0.35) !important;
+  font-family: 'Manrope', sans-serif !important;
+  background: var(--cream) !important;
+  overflow: hidden;
+  display: flex;
+}
+
+/* стрелки навигации по месяцам */
+.custom-calendar .react-datepicker__navigation-icon::before {
+  border-color: var(--cream) !important;
+}
+
+.custom-calendar .react-datepicker__navigation:hover
+  .react-datepicker__navigation-icon::before {
+  border-color: var(--gold-soft) !important;
+}
+
+.custom-calendar .react-datepicker__month-container {
+  background: var(--cream);
+}
+
+.custom-calendar .react-datepicker__header {
+  background: linear-gradient(135deg, #a12645, #c14f5f) !important;
+  border-bottom: none !important;
+  padding-top: 14px;
+}
+
+.custom-calendar .react-datepicker__current-month,
+.custom-calendar .react-datepicker__day-name,
+.custom-calendar .react-datepicker-time__header {
+  color: var(--cream) !important;
+}
+
+.custom-calendar .react-datepicker__day {
+  color: var(--ink);
+  border-radius: 8px !important;
+}
+
+.custom-calendar .react-datepicker__day--outside-month {
+  color: rgba(44, 20, 32, 0.35);
+}
+
+.custom-calendar .react-datepicker__day--disabled {
+  color: rgba(44, 20, 32, 0.25) !important;
+}
+
+.custom-calendar .react-datepicker__day--selected,
+.custom-calendar .react-datepicker__day--keyboard-selected {
+  background-color: #a12645 !important;
+  color: var(--cream) !important;
+}
+
+.custom-calendar .react-datepicker__day:hover {
+  background-color: #f3d3d9 !important;
+}
+
+/* --- колонка выбора времени, приведена к общей палитре вместо
+   стандартного белого/системного вида react-datepicker --- */
+
+.custom-calendar .react-datepicker__header--time {
+  background: linear-gradient(135deg, #a12645, #c14f5f) !important;
+  border-bottom: none !important;
+  padding-top: 14px;
+}
+
+.custom-calendar .react-datepicker__time-container {
+  border-left: 1px solid var(--line) !important;
+  width: 110px;
+}
+
+.custom-calendar .react-datepicker__time,
+.custom-calendar .react-datepicker__time-box {
+  background: var(--cream) !important;
+  width: 100% !important;
+}
+
+.custom-calendar .react-datepicker__time-list {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold) transparent;
+}
+
+.custom-calendar .react-datepicker__time-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-calendar .react-datepicker__time-list::-webkit-scrollbar-thumb {
+  background-color: var(--gold);
+  border-radius: 999px;
+}
+
+.custom-calendar .react-datepicker__time-list-item {
+  color: var(--ink) !important;
+  font-weight: 600;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.custom-calendar .react-datepicker__time-list-item:hover {
+  background-color: #f3d3d9 !important;
+  color: #7a1f30 !important;
+}
+
+.custom-calendar .react-datepicker__time-list-item--selected {
+  background-color: #a12645 !important;
+  color: var(--cream) !important;
+  font-weight: 700;
+}
+
+.custom-calendar .react-datepicker__triangle::before,
+.custom-calendar .react-datepicker__triangle::after {
+  border-bottom-color: #a12645 !important;
+}
+
+.place-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.place-card {
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  padding: 16px 10px;
+  text-align: center;
+  background: #fffaf1;
+  color: var(--ink);
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.place-card.selected {
+  border-color: #a12645;
+  background: #fdecef;
+  color: #7a1f30;
+  box-shadow: 0 8px 18px -8px rgba(161, 38, 69, 0.4);
+}
+
+.place-icon {
+  font-size: 26px;
+  color: #a12645;
+}
+
+.place-card.selected .place-icon {
+  color: #7a1f30;
+}
+
+textarea {
+  width: 100%;
+  min-height: 80px;
+  resize: vertical;
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  padding: 13px 15px;
+  background: #fffaf1;
+  color: var(--ink);
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #a12645;
+}
+
+.submit-btn {
+  width: 100%;
+  margin-top: 26px;
+  padding: 15px;
+  font-size: 16px;
+}
+
+.error-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  color: #a1264a;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.summary-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 18px;
+}
+
+.summary-title svg {
+  width: 18px;
+  height: 18px;
+  color: #a12645;
+}
+
+.summary-line {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.summary-line:last-of-type {
+  border-bottom: none;
+}
+
+.summary-line svg {
+  width: 16px;
+  height: 16px;
+  color: #a12645;
+  margin-top: 2px;
+}
+
+.summary-line strong {
+  color: var(--ink);
+}
+
+.summary-footer {
+  margin-top: 18px;
+  text-align: center;
+  color: var(--ink);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+.summary-footer svg {
+  color: var(--gold);
+}
+
+/* ==================== ФОНОВЫЕ ПЛЫВУЩИЕ СЕРДЕЧКИ ==================== */
+
+.bg-heart-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.bg-heart {
+  position: absolute;
+  bottom: 0;
+  display: block;
+  color: var(--rose);
+}
+
+.bg-heart svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ==================== СЕРДЦА (веером из точки клика) ==================== */
+
+.heart-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 55;
+  overflow: hidden;
+}
+
+.floating-heart {
+  position: absolute;
+  display: block;
+  color: #e08a9a;
+}
+
+.floating-heart svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ==================== МАСКОТ-МЕДВЕЖОНОК ==================== */
+
+.mascot {
+  width: 132px;
+  height: 126px;
+  margin-bottom: 6px;
+  filter: drop-shadow(0 14px 22px rgba(44, 20, 32, 0.28));
+}
+
+.mascot-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+/* лёгкое моргание глаз */
+.bear-eye.blink {
+  animation: bearBlink 4.5s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.bear-eye.blink:nth-of-type(2) {
+  animation-delay: 0.05s;
+}
+
+@keyframes bearBlink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+
+/* ==================== ДОСТУПНОСТЬ ==================== */
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    animation: none;
+  }
+  .bear-eye.blink {
+    animation: none;
+  }
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .app-shell {
+    padding: 12px 12px 10px;
+  }
+
+  .content-card {
+    padding: 30px 22px 26px;
+  }
+
+  .planner,
+  .summary {
+    padding: 18px 16px;
+  }
+
+  .place-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    gap: 12px;
+  }
+
+  .yes-btn,
+  .no-btn {
+    padding-left: 22px;
+    padding-right: 22px;
+  }
+
+  .custom-calendar.react-datepicker {
+    flex-direction: column;
+  }
+
+  .custom-calendar .react-datepicker__time-container {
+    width: 100%;
+    border-left: none !important;
+    border-top: 1px solid var(--line) !important;
+  }
+}
